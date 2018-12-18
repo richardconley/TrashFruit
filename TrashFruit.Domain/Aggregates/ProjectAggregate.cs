@@ -14,6 +14,7 @@ namespace TrashFruit.Domain.Aggregates
         IHandleCommand<AddTasksToProject>,
         IHandleCommand<MarkTaskCompleted>,
         IHandleCommand<AssignTaskToUser>,
+        IHandleCommand<UpdateTaskStatus>,
         IApplyEvent<ProjectStarted>,
         IApplyEvent<TasksAddedToProject>,
         IApplyEvent<TaskCompleted>,
@@ -66,6 +67,10 @@ namespace TrashFruit.Domain.Aggregates
         #region Commands
         IEnumerable IHandleCommand<StartProject>.Handle(StartProject c)
         {
+            if(started)
+            {
+                throw new ProjectAlreadyExists { Id = c.Id };
+            }
             yield return new ProjectStarted
             {
                 Id = c.Id,
@@ -139,7 +144,20 @@ namespace TrashFruit.Domain.Aggregates
                 AssignedFromUser = working.AssignedToUser
             };
         }
-              
+
+        IEnumerable IHandleCommand<UpdateTaskStatus>.Handle(UpdateTaskStatus c)
+        {
+            ProjectTask worker = GetTaskByID(c.TaskId);
+
+            yield return new TaskUpdated
+            {
+                Comment = c.Comment,
+                Id = c.Id,
+                TaskId = c.TaskId,
+                Status = c.Status
+            };
+        }
+
         #endregion
     }
 
@@ -150,6 +168,7 @@ namespace TrashFruit.Domain.Aggregates
         public string Description;
         public TaskStatus Status;
         public Guid AssignedToUser;
+        public string Comment;
     }
 
     public enum TaskStatus

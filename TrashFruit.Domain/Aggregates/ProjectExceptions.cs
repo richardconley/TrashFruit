@@ -13,7 +13,7 @@ namespace TrashFruit.Domain.Aggregates
     {
         public Guid Id;
         public int TaskId;
-    }
+    }            
     public class TaskInInvalidState:Exception
     {
         public Guid Id;
@@ -25,5 +25,9 @@ namespace TrashFruit.Domain.Aggregates
     {
         public Guid Id;
         public int TaskId;
+    }
+    public class ProjectAlreadyExists:Exception
+    {
+        public Guid Id;
     }
 }

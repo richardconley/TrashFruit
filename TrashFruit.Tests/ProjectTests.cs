@@ -7,7 +7,7 @@ using TrashFruit.Domain.Aggregates;
 using TrashFruit.Domain.Commands;
 using TrashFruit.Domain.Events;
 
-namespace Tests
+namespace TrashFruit.Tests
 {
     public class ProjectTests:BDDTest<ProjectAggregate>
     {
@@ -49,22 +49,8 @@ namespace Tests
                 }));
         }
 
-
         [Test]
-        public void CannotAddTasksToUnstartedProject()
-        {
-            Test(
-                Given(),
-                When(new AddTasksToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                }),
-              ThenFailWith<ProjectNotStarted>());
-        }
-
-        [Test]
-        public void CanAddTasksToProject()
+        public void CannotStartANewProjectWithARedundantGUID()
         {
             Test(
                 Given(new ProjectStarted
@@ -72,218 +58,15 @@ namespace Tests
                     Id = testId,
                     Title = testTitle
                 }),
-                When(new AddTasksToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                }),
-                Then(new TasksAddedToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                }));
-        }
-
-        [Test]
-        public void CanCompleteProjectTask()
-        {
-            Test(
-                Given(
-                new ProjectStarted
+                When(new StartProject
                 {
                     Id = testId,
                     Title = testTitle
-                },
-                new TasksAddedToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
                 }),
-                When(new MarkTaskCompleted
-                {
-                    Id = testId,
-                    TaskId = testTask1.Id,
-                    TimeCompleted = testCompletedTime
-                }),
-                Then(
-                    new TaskCompleted
-                    {
-                        Id=testId,
-                        TaskId=testTask1.Id,
-                        TimeCompleted=testCompletedTime
-                    }
-                    ));
+                ThenFailWith<ProjectAlreadyExists>());
         }
 
-        [Test]
-        public void CannotCompleteAlreadyCompletedTask()
-        {
-            Test(
-                Given(
-                new ProjectStarted
-                {
-                    Id = testId,
-                    Title = testTitle
-                },
-                new TasksAddedToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                },
-                new TaskCompleted
-                {
-                    Id = testId,
-                    TaskId = testTask1.Id,
-                    TimeCompleted = testCompletedTime
-                }),
-                When(new MarkTaskCompleted
-                {
-                    Id = testId,
-                    TaskId = testTask1.Id,
-                    TimeCompleted = testCompletedTime
-                }),
-                ThenFailWith<TaskAlreadyCompleted>()
-                );
-        }
-
-        [Test]
-        public void CanAssignTaskToUser()
-        {
-            Test(
-                Given(new ProjectStarted
-                {
-                    Id = testId,
-                    Title = testTitle
-                },
-                new TasksAddedToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                }),
-                When(new AssignTaskToUser
-                { TaskId = testTask1.Id,
-                    Id = testId,
-                    AssignedToUser=getsTaskUser
-                }),
-                Then(new TaskAssignedToUser
-                {
-                    TaskId=testTask1.Id,
-                    Id=testId,
-                    AssignedToUser=getsTaskUser,
-                    AssignedFromUser=losesTaskUser
-                })
-           
-                );
-
-            
-        }
-
-
-        [Test]
-        public void CanReAssignTaskToUser()
-        {
-            Test(
-                Given(new ProjectStarted
-                {
-                    Id = testId,
-                    Title = testTitle
-                },
-                new TasksAddedToProject
-                {
-                    Id = testId,
-                    ProjectTasks = new List<ProjectTask> { testTask1 }
-                },
-                new TaskAssignedToUser
-                {
-                    TaskId = testTask1.Id,
-                    Id = testId,
-                    AssignedToUser = getsTaskUser
-                }
-                ),
-                When(new AssignTaskToUser
-                {
-                    TaskId = testTask1.Id,
-                    Id = testId,
-                    AssignedToUser = finalUser
-                }),
-                Then(new TaskAssignedToUser
-                {
-                    TaskId = testTask1.Id,
-                    Id = testId,
-                    AssignedToUser = finalUser,
-                    AssignedFromUser = getsTaskUser
-                })
-
-                );
-
-
-        }
-
-        [Test]
-        public void CannotAssignCompletedTaskToUser()
-        {
-            Test(
-               Given(new ProjectStarted
-               {
-                   Id = testId,
-                   Title = testTitle
-               },
-               new TasksAddedToProject
-               {
-                   Id = testId,
-                   ProjectTasks = new List<ProjectTask> { testTask1 }
-               },
-               new TaskCompleted
-               {
-                   Id = testId,
-                   TaskId = testTask1.Id,
-                   TimeCompleted = testCompletedTime
-               }
-               ),
-               When(new AssignTaskToUser
-               {
-                   TaskId = testTask1.Id,
-                   Id = testId,
-                   AssignedToUser = finalUser
-               }),
-               ThenFailWith<TaskInInvalidState>()
-               );
-
-        }
-
-        [Test]
-        public void CannotUnassignTaskOnceAssigned()
-        {
-            Test(
-              Given(new ProjectStarted
-              {
-                  Id = testId,
-                  Title = testTitle
-              },
-              new TasksAddedToProject
-              {
-                  Id = testId,
-                  ProjectTasks = new List<ProjectTask> { testTask1 }
-              },
-              new TaskAssignedToUser
-              {
-                  TaskId = testTask1.Id,
-                  Id = testId,
-                  AssignedToUser = getsTaskUser,
-                  AssignedFromUser = losesTaskUser
-              }
-              ),
-              When(new AssignTaskToUser
-              {
-                  TaskId = testTask1.Id,
-                  Id = testId,
-                  AssignedToUser = Guid.Empty
-              }),
-              ThenFailWith<TaskCannotBeUnassigned>()
-              );
-
-        }
-
+      
     }
 
 
