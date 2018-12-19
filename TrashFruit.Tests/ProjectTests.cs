@@ -66,6 +66,50 @@ namespace TrashFruit.Tests
                 ThenFailWith<ProjectAlreadyExists>());
         }
 
+        [Test]
+        public void CanAdvanceProjectStatus()
+        {
+            Test(
+                Given(new ProjectStarted
+                {
+                    Id = testId,
+                    Title = testTitle
+                }),
+                When(new SetProjectStatus
+                {
+                    Id = testId,
+                    Status = ProjectStatusLane.InProgress
+                }),
+                Then(new ProjectStatusSet
+                {
+                    Id = testId,
+                    Status = ProjectStatusLane.InProgress
+                }
+                ));
+        }
+
+        [Test]
+        public void CannotAssignCancelledProjectToUser()
+        {
+            Test(
+                Given(new ProjectStarted
+                {
+                    Id = testId,
+                    Title = testTitle
+                },
+                new ProjectStatusSet
+                {
+                    Id = testId,
+                    Status = ProjectStatusLane.Cancelled
+                }),
+                When(new AssignProjectToUser
+                {
+                    Id = testId,
+                    AssignedToUser = finalUser
+                }),
+                ThenFailWith<CancelledProjectCannotBeAssigned>());
+        }
+
       
     }
 

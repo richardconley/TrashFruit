@@ -15,25 +15,29 @@ namespace TrashFruit.Domain.Aggregates
         IHandleCommand<MarkTaskCompleted>,
         IHandleCommand<AssignTaskToUser>,
         IHandleCommand<UpdateTaskStatus>,
+        IHandleCommand<SetProjectStatus>,
+        IHandleCommand<AssignProjectToUser>,
         IApplyEvent<ProjectStarted>,
         IApplyEvent<TasksAddedToProject>,
         IApplyEvent<TaskCompleted>,
-        IApplyEvent<TaskAssignedToUser>
+        IApplyEvent<TaskAssignedToUser>,
+        IApplyEvent<ProjectStatusSet>,
+        IApplyEvent<TaskUpdated>
     {
         #region AggregateParts
         private bool started;
         private string Title;
-        private List<ProjectTask> projectTasks;
-
+        private List<ProjectTask> ProjectTasks;
+        private ProjectStatusLane Status;
         public ProjectAggregate()
         {
-            projectTasks = new List<ProjectTask>();
+            ProjectTasks = new List<ProjectTask>();
             started = false;
         }
 
-        private ProjectTask GetTaskByID(int id)
+        public ProjectTask GetTaskByID(int id)
         {
-            return projectTasks.Single(f => f.Id == id);
+            return ProjectTasks.Single(f => f.Id == id);
         }
         #endregion
 
@@ -47,7 +51,7 @@ namespace TrashFruit.Domain.Aggregates
 
         void IApplyEvent<TasksAddedToProject>.Apply(TasksAddedToProject e)
         {
-            projectTasks.AddRange(e.ProjectTasks);
+            ProjectTasks.AddRange(e.ProjectTasks);
         }
 
         void IApplyEvent<TaskCompleted>.Apply(TaskCompleted e)
@@ -156,6 +160,37 @@ namespace TrashFruit.Domain.Aggregates
                 TaskId = c.TaskId,
                 Status = c.Status
             };
+        }
+
+        IEnumerable IHandleCommand<SetProjectStatus>.Handle(SetProjectStatus c)
+        {
+            yield return new ProjectStatusSet
+            {
+                Id = c.Id,
+                Status = c.Status
+            };
+        }
+
+        void IApplyEvent<ProjectStatusSet>.Apply(ProjectStatusSet e)
+        {
+            Status = e.Status;
+        }
+
+        IEnumerable IHandleCommand<AssignProjectToUser>.Handle(AssignProjectToUser c)
+        {
+            if (Status == ProjectStatusLane.Cancelled) throw new CancelledProjectCannotBeAssigned { Id = c.Id, AssignedToUser = c.AssignedToUser };
+            yield return new ProjectAssignedToUser
+            {
+                Id = c.Id,
+                AssignedToUser = c.AssignedToUser
+        };
+        }
+
+        void IApplyEvent<TaskUpdated>.Apply(TaskUpdated e)
+        {
+            ProjectTask worker = GetTaskByID(e.TaskId);
+            worker.Comment = e.Comment;
+            //worker.Status = e.Status;
         }
 
         #endregion

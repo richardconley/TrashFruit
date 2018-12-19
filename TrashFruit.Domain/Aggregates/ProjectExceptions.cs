@@ -30,4 +30,10 @@ namespace TrashFruit.Domain.Aggregates
     {
         public Guid Id;
     }
+    public class CancelledProjectCannotBeAssigned:Exception
+    {
+        public Guid Id;
+        public Guid AssignedToUser;
+    }
+  
 }

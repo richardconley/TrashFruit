@@ -63,6 +63,50 @@ namespace TrashFruit.Tests
                     Status = TaskStatus.InProgress,
                     Comment = comment
                 }));
+
+        }
+
+        [Test]
+        public void CommentOnTaskActuallyUpdated()
+        {
+            //TODO: Make sure comment is applied to aggregate - not just event flow
+            Test(
+                Given(
+                new ProjectStarted
+                {
+                    Id = testId,
+                    Title = testTitle
+                },
+                new TasksAddedToProject
+                {
+                    Id = testId,
+                    ProjectTasks = new List<ProjectTask> { testTask1 }
+                },
+                new TaskUpdated
+                {
+                    Id = testId,
+                    TaskId = testTask1.Id,
+                    Status = TaskStatus.InProgress,
+                    Comment = comment
+                }
+                ),When(new UpdateTaskStatus
+                {
+                    Id = testId,
+                    TaskId = testTask1.Id,
+                    Status = TaskStatus.InProgress,
+                    Comment = comment
+                }),Then(new TaskUpdated
+                {
+                    Id = testId,
+                    TaskId = testTask1.Id,
+                    Status = TaskStatus.InProgress,
+                    Comment = comment
+                }));
+
+            //hacky, but no cleaner way to test check this at this point
+            ProjectAggregate proj = GetAggregate();
+            ProjectTask tsk = proj.GetTaskByID(testTask1.Id);
+            Assert.AreEqual(comment, tsk.Comment);
         }
 
         [Test]
