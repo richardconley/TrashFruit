@@ -6,72 +6,21 @@ using Edument.CQRS;
 using TrashFruit.Domain.Events;
 using TrashFruit.Domain.Commands;
 using System.Linq;
-
 namespace TrashFruit.Domain.Aggregates
 {
-    public class ProjectAggregate : Aggregate,
-        IHandleCommand<StartProject>,
+    public partial class ProjectAggregate : IHandleCommand<StartProject>,
         IHandleCommand<AddTasksToProject>,
         IHandleCommand<MarkTaskCompleted>,
         IHandleCommand<AssignTaskToUser>,
         IHandleCommand<UpdateTaskStatus>,
         IHandleCommand<SetProjectStatus>,
-        IHandleCommand<AssignProjectToUser>,
-        IApplyEvent<ProjectStarted>,
-        IApplyEvent<TasksAddedToProject>,
-        IApplyEvent<TaskCompleted>,
-        IApplyEvent<TaskAssignedToUser>,
-        IApplyEvent<ProjectStatusSet>,
-        IApplyEvent<TaskUpdated>
+        IHandleCommand<AssignProjectToUser>
     {
-        #region AggregateParts
-        private bool started;
-        private string Title;
-        private List<ProjectTask> ProjectTasks;
-        private ProjectStatusLane Status;
-        public ProjectAggregate()
-        {
-            ProjectTasks = new List<ProjectTask>();
-            started = false;
-        }
-
-        public ProjectTask GetTaskByID(int id)
-        {
-            return ProjectTasks.Single(f => f.Id == id);
-        }
-        #endregion
-
-
-        #region Events
-        void IApplyEvent<ProjectStarted>.Apply(ProjectStarted e)
-        {
-            started = true;
-            Title = e.Title;
-        }
-
-        void IApplyEvent<TasksAddedToProject>.Apply(TasksAddedToProject e)
-        {
-            ProjectTasks.AddRange(e.ProjectTasks);
-        }
-
-        void IApplyEvent<TaskCompleted>.Apply(TaskCompleted e)
-        {
-            ProjectTask working = GetTaskByID(e.TaskId);
-            working.Status = TaskStatus.Completed;
-        }
-
-        void IApplyEvent<TaskAssignedToUser>.Apply(TaskAssignedToUser e)
-        {
-            ProjectTask working = GetTaskByID(e.TaskId);
-            working.AssignedToUser = e.AssignedToUser;
-        }
-
-        #endregion
 
         #region Commands
         IEnumerable IHandleCommand<StartProject>.Handle(StartProject c)
         {
-            if(started)
+            if (started)
             {
                 throw new ProjectAlreadyExists { Id = c.Id };
             }
@@ -81,10 +30,11 @@ namespace TrashFruit.Domain.Aggregates
                 Title = c.Title
             };
         }
-        
+
         IEnumerable IHandleCommand<AddTasksToProject>.Handle(AddTasksToProject c)
         {
-            if (!started){
+            if (!started)
+            {
                 throw new ProjectNotStarted();
             }
 
@@ -94,7 +44,7 @@ namespace TrashFruit.Domain.Aggregates
                     Id = c.Id,
                     ProjectTasks = c.ProjectTasks
                 };
-                       
+
         }
 
         IEnumerable IHandleCommand<MarkTaskCompleted>.Handle(MarkTaskCompleted c)
@@ -183,7 +133,7 @@ namespace TrashFruit.Domain.Aggregates
             {
                 Id = c.Id,
                 AssignedToUser = c.AssignedToUser
-        };
+            };
         }
 
         void IApplyEvent<TaskUpdated>.Apply(TaskUpdated e)
@@ -195,23 +145,4 @@ namespace TrashFruit.Domain.Aggregates
 
         #endregion
     }
-
-    public class ProjectTask
-    {
-        public int Id;
-        public string Title;
-        public string Description;
-        public TaskStatus Status;
-        public Guid AssignedToUser;
-        public string Comment;
-    }
-
-    public enum TaskStatus
-    {
-        UnStarted,
-        InProgress,
-        Blocked,
-        Completed,
-        Cancelled
-           }
 }
