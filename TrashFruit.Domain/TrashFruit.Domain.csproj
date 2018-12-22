@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\GIT\cqrs-starter-kit\cqrs-starter-kit\starter-kit\Edument.CQRS\Edument.CQRS.csproj" />
+    <ProjectReference Include="..\EdumentCQRS.Core\EdumentCQRS.Core.csproj" />
   </ItemGroup>
 
 </Project>

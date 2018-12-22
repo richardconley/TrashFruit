@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using Edument.CQRS;
+using EdumentCQRS.Core;
 using TrashFruit.Domain.Events;
 using TrashFruit.Domain.Commands;
 using System.Linq;

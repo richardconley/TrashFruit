@@ -1,11 +1,12 @@
-﻿using Edument.CQRS;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using TrashFruit.Domain;
 using TrashFruit.Domain.Aggregates;
 using TrashFruit.Domain.Commands;
 using TrashFruit.Domain.Events;
+using Edument.CQRS;
+using EdumentCQRS.Core;
 
 namespace TrashFruit.Tests
 {
