@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="..\EdumentCQRS.Core\EdumentCQRS.Core.csproj" />
     <ProjectReference Include="..\TrashFruit.Domain\TrashFruit.Domain.csproj" />
+    <ProjectReference Include="..\TrashFruit\TrashFruit.csproj" />
   </ItemGroup>
 
 </Project>

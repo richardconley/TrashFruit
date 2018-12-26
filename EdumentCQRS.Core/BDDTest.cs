@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml.Serialization;
 using NUnit.Framework;
 
+using Microsoft.AspNetCore.Mvc.Core;
 
 
 namespace Edument.CQRS
@@ -57,20 +58,6 @@ namespace Edument.CQRS
             };
         }
 
-        //protected Func<TAggregate,object> When<TCommand> (TCommand command, ControllerBase cont)
-        //{
-        //    return agg =>
-        //    {
-        //        try
-        //        {
-
-        //        }
-        //        catch(Exception e)
-        //        {
-        //            return e;
-        //        }
-        //    }
-        //}
 
         protected Action<object> Then(params object[] expectedEvents)
         {
