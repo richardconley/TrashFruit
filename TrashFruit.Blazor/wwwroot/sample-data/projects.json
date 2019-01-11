@@ -1,0 +1,24 @@
+[
+  {
+    "ProjectId": 1,
+    "Title": "Barn",
+    "Comment": "Waiting on requirements",
+    "Status": "UnStarted",
+    "Owner": "Abbey"
+  },
+  {
+    "ProjectId": 2,
+    "Title": "Fencing",
+    "Comment": "Need More Nails",
+    "Owner": "Rich",
+    "Status": "Blocked"
+  },
+  {
+    "ProjectId": 3,
+    "Title": "Network Closet",
+    "Comment": "Relocating To Garage",
+    "Status": "InProgress",
+    "Owner": "Rich"
+  }
+
+]
