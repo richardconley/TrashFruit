@@ -28,7 +28,16 @@ else
                     <td>@project.ProjectId</td>
                     <td>@project.Title</td>
                     <td>@project.Status</td>
-                    <td>@project.Owner</td>
+                    @*<td>@project.Owner</td>*@
+                    <td>
+                        <select class="form-control" onchange="@CountryClicked">
+                            <option value="">@project.Owner</option>
+                            @foreach (var owner in owners)
+                            {
+                                <option value="@owner">@owner</option>
+                            }
+                        </select>
+                    </td>
                     <td>@project.Comment</td>
                 </tr>
             }
@@ -38,11 +47,21 @@ else
 
 @functions {
     ListedProject[] projects;
+    string[] owners;
 
     protected override async Task OnInitAsync()
     {
         projects = await Http.GetJsonAsync<ListedProject[]>("sample-data/projects.json");
+        owners = await Http.GetJsonAsync<string[]>("sample-data/owners.json");
     }
+
+    protected async void CountryClicked(UIChangeEventArgs countryEvent)
+    {
+       
+    }
+
+
+
 
     class ListedProject
     {

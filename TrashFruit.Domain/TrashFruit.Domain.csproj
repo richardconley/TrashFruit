@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdumentCQRS.Core\EdumentCQRS.Core.csproj" />
+    <PackageReference Include="EdumentCQRS.Core" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

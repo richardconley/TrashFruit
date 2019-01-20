@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EdumentCQRS.Core" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.2.0" />
@@ -26,7 +27,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\EdumentCQRS.Core\EdumentCQRS.Core.csproj" />
     <ProjectReference Include="..\TrashFruit.Domain\TrashFruit.Domain.csproj" />
   </ItemGroup>
 
